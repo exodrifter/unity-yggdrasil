@@ -118,6 +118,37 @@
             <param name="entry">The entry to archive.</param>
             <param name="modificationTime">The datetime the entry was last modified.</param>
         </member>
+        <member name="T:LibGit2Sharp.AuthenticationException">
+            <summary>
+            The exception that is thrown when an operation which requires an
+            authentication fails.
+            </summary>
+        </member>
+        <member name="M:LibGit2Sharp.AuthenticationException.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:LibGit2Sharp.AuthenticationException"/> class.
+            </summary>
+        </member>
+        <member name="M:LibGit2Sharp.AuthenticationException.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:LibGit2Sharp.AuthenticationException"/> class with a specified error message.
+            </summary>
+            <param name="message">A message that describes the error.</param>
+        </member>
+        <member name="M:LibGit2Sharp.AuthenticationException.#ctor(System.String,System.Exception)">
+            <summary>
+            Initializes a new instance of the <see cref="T:LibGit2Sharp.AuthenticationException"/> class with a specified error message and a reference to the inner exception that is the cause of this exception.
+            </summary>
+            <param name="message">The error message that explains the reason for the exception.</param>
+            <param name="innerException">The exception that is the cause of the current exception. If the <paramref name="innerException"/> parameter is not a null reference, the current exception is raised in a catch block that handles the inner exception.</param>
+        </member>
+        <member name="M:LibGit2Sharp.AuthenticationException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Initializes a new instance of the <see cref="T:LibGit2Sharp.AuthenticationException"/> class with a serialized data.
+            </summary>
+            <param name="info">The <see cref="T:System.Runtime.Serialization.SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
+            <param name="context">The <see cref="T:System.Runtime.Serialization.StreamingContext"/> that contains contextual information about the source or destination.</param>
+        </member>
         <member name="T:LibGit2Sharp.BareRepositoryException">
             <summary>
             The exception that is thrown when an operation which requires a
@@ -1207,32 +1238,6 @@
             <summary>
             Algorithm to be used when performing a Diff.
             By default, <see cref="F:LibGit2Sharp.DiffAlgorithm.Myers"/> will be used.
-            </summary>
-        </member>
-        <member name="T:LibGit2Sharp.Core.CompatExtensions.StreamExtensions">
-            <summary>
-            Extension methods for streams.
-            </summary>
-        </member>
-        <member name="M:LibGit2Sharp.Core.CompatExtensions.StreamExtensions.CopyTo(System.IO.Stream,System.IO.Stream)">
-            <summary>
-            Reads all the bytes from the current stream and writes them to the destination stream.
-            </summary>
-            <param name="original">The current stream.</param>
-            <param name="destination">The stream that will contain the contents of the current stream.</param>
-            <exception cref="T:System.ArgumentNullException">Destination is null.</exception>
-            <exception cref="T:System.NotSupportedException">The current stream does not support reading.-or-destination does not support Writing.</exception>
-            <exception cref="T:System.ObjectDisposedException">Either the current stream or destination were closed before the System.IO.Stream.CopyTo(System.IO.Stream) method was called.</exception>
-            <exception cref="T:System.IO.IOException">An I/O error occurred.</exception>
-        </member>
-        <member name="T:LibGit2Sharp.Core.Compat.Environment">
-            <summary>
-            Provides information about, and means to manipulate, the current environment and platform.
-            </summary>
-        </member>
-        <member name="P:LibGit2Sharp.Core.Compat.Environment.Is64BitProcess">
-            <summary>
-            Determines whether the current process is a 64-bit process.
             </summary>
         </member>
         <member name="T:LibGit2Sharp.Core.FileHistory">
@@ -5220,6 +5225,55 @@
         <member name="P:LibGit2Sharp.SecureUsernamePasswordCredentials.Password">
             <summary>
             Password for username/password authentication (as in HTTP basic auth).
+            </summary>
+        </member>
+        <member name="T:LibGit2Sharp.SshAgentCredentials">
+            <summary>
+            Class that holds SSH agent credentials for remote repository access.
+            </summary>
+        </member>
+        <member name="M:LibGit2Sharp.SshAgentCredentials.GitCredentialHandler(System.IntPtr@)">
+            <summary>
+            Callback to acquire a credential object.
+            </summary>
+            <param name="cred">The newly created credential object.</param>
+            <returns>0 for success, &lt; 0 to indicate an error, &gt; 0 to indicate no credential was acquired.</returns>
+        </member>
+        <member name="P:LibGit2Sharp.SshAgentCredentials.Username">
+            <summary>
+            Username for SSH authentication.
+            </summary>
+        </member>
+        <member name="T:LibGit2Sharp.SshUserKeyCredentials">
+            <summary>
+            Class that holds SSH username with key credentials for remote repository access.
+            </summary>
+        </member>
+        <member name="M:LibGit2Sharp.SshUserKeyCredentials.GitCredentialHandler(System.IntPtr@)">
+            <summary>
+            Callback to acquire a credential object.
+            </summary>
+            <param name="cred">The newly created credential object.</param>
+            <returns>0 for success, &lt; 0 to indicate an error, &gt; 0 to indicate no credential was acquired.</returns>
+        </member>
+        <member name="P:LibGit2Sharp.SshUserKeyCredentials.Username">
+            <summary>
+            Username for SSH authentication.
+            </summary>
+        </member>
+        <member name="P:LibGit2Sharp.SshUserKeyCredentials.PublicKey">
+            <summary>
+            Public key file location for SSH authentication.
+            </summary>
+        </member>
+        <member name="P:LibGit2Sharp.SshUserKeyCredentials.PrivateKey">
+            <summary>
+            Private key file location for SSH authentication.
+            </summary>
+        </member>
+        <member name="P:LibGit2Sharp.SshUserKeyCredentials.Passphrase">
+            <summary>
+            Passphrase for SSH authentication.
             </summary>
         </member>
         <member name="T:LibGit2Sharp.StageOptions">
@@ -13452,6 +13506,23 @@
             Password for username/password authentication (as in HTTP basic auth).
             </summary>
         </member>
+        <member name="T:LibGit2Sharp.UsernameQueryCredentials">
+            <summary>
+            Class that holds username query credentials for remote repository access.
+            </summary>
+        </member>
+        <member name="M:LibGit2Sharp.UsernameQueryCredentials.GitCredentialHandler(System.IntPtr@)">
+            <summary>
+            Callback to acquire a credential object.
+            </summary>
+            <param name="cred">The newly created credential object.</param>
+            <returns>0 for success, &lt; 0 to indicate an error, &gt; 0 to indicate no credential was acquired.</returns>
+        </member>
+        <member name="P:LibGit2Sharp.UsernameQueryCredentials.Username">
+            <summary>
+            Username for querying the server for supported authentication.
+            </summary>
+        </member>
         <member name="T:LibGit2Sharp.Version">
             <summary>
             Gets the current LibGit2Sharp version.
@@ -13508,6 +13579,16 @@
         <member name="F:LibGit2Sharp.SupportedCredentialTypes.Default">
             <summary>
             Ask Windows to provide its default credentials for the current user (e.g. NTLM)
+            </summary>
+        </member>
+        <member name="F:LibGit2Sharp.SupportedCredentialTypes.Ssh">
+            <summary>
+            SSH with username and public/private keys. (SshUserKeyCredentials, SshAgentCredentials).
+            </summary>
+        </member>
+        <member name="F:LibGit2Sharp.SupportedCredentialTypes.UsernameQuery">
+            <summary>
+            Queries the server with the given username, then later returns the supported credential types.
             </summary>
         </member>
         <member name="T:LibGit2Sharp.StashApplyProgress">
