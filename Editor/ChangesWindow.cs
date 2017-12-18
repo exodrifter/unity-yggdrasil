@@ -1,5 +1,6 @@
 ﻿using LibGit2Sharp;
 using System;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
@@ -10,9 +11,9 @@ namespace Exodrifter.Yggdrasil
 		[SerializeField, HideInInspector]
 		private ToggledDictionary toggled;
 		[SerializeField, HideInInspector]
-		private string commitSummary = "";
+		private string summary = "";
 		[SerializeField, HideInInspector]
-		private string commitMessage = "";
+		private string message = "";
 		[SerializeField, HideInInspector]
 		private bool all = false;
 		[SerializeField, HideInInspector]
@@ -69,15 +70,15 @@ namespace Exodrifter.Yggdrasil
 
 				// Change Summary
 				EditorGUILayout.PrefixLabel("Change Summary");
-				commitSummary = EditorGUILayout.TextField(commitSummary);
+				summary = EditorGUILayout.TextField(summary);
 
 				// Change Message
 				var oldWrap = EditorStyles.textField.wordWrap;
 				EditorStyles.textField.wordWrap = true;
 				var size = EditorGUIUtility.singleLineHeight;
 				EditorGUILayout.PrefixLabel("Change Message");
-				commitMessage = GUILayout.TextArea(
-					commitMessage, GUILayout.MinHeight(size * 3));
+				message = GUILayout.TextArea(
+					message, GUILayout.MinHeight(size * 3));
 				EditorStyles.textField.wordWrap = oldWrap;
 
 				// Push button
@@ -103,7 +104,7 @@ namespace Exodrifter.Yggdrasil
 						MessageType.Error);
 				}
 				// Long summary message
-				else if (commitSummary.Length > 50)
+				else if (summary.Length > 50)
 				{
 					EditorGUILayout.HelpBox(
 						"Summary is too long",
@@ -236,42 +237,39 @@ namespace Exodrifter.Yggdrasil
 		}
 
 		/// <summary>
-		/// Emulates the `git add .`, `git commit`, and `git push` commands.
+		/// Commits and pushes the selected files.
 		/// </summary>
 		private void CommitAndPushToggled()
 		{
-			try
+			// Stage selected files
+			if (all)
 			{
-				using (var repo = new Repository(ConfigWindow.Config.path))
+				Git.AddAll();
+			}
+			else
+			{
+				var toAdd = new List<string>();
+				foreach (var kvp in toggled.Dictionary)
 				{
-					foreach (var kvp in toggled.Dictionary)
+					if (kvp.Value)
 					{
-						if (all || kvp.Value)
-						{
-							Commands.Stage(repo, kvp.Key);
-						}
+						toAdd.Add(kvp.Key);
 					}
-
-					var name = ConfigWindow.Config.name;
-					var email = ConfigWindow.Config.email;
-					var timestamp = DateTime.Now;
-					var author = new Signature(name, email, timestamp);
-					var message = commitSummary.Trim()
-						+ "\n\n" + Wrap(commitMessage, 72);
-					repo.Commit(message, author, author);
-
-					// TODO: push
 				}
+				Git.Add(toAdd);
 			}
-			finally
-			{
-				GUI.FocusControl(null);
-				toggled.Dictionary.Clear();
-				commitSummary = "";
-				commitMessage = "";
 
-				State.UpdateCache();
-			}
+			// Push
+			Git.Commit(summary, message);
+			Git.Push();
+
+			// Reset UI
+			GUI.FocusControl(null);
+			toggled.Dictionary.Clear();
+			summary = "";
+			message = "";
+
+			State.UpdateCache();
 		}
 
 		#region Static
@@ -289,7 +287,7 @@ namespace Exodrifter.Yggdrasil
 
 		private bool HasCommitMessage()
 		{
-			return !string.IsNullOrEmpty(commitSummary.Trim());
+			return !string.IsNullOrEmpty(summary.Trim());
 		}
 
 		private bool IsAnyToggled()
@@ -310,23 +308,6 @@ namespace Exodrifter.Yggdrasil
 		private static GUIContent Content(Texture texture, string tooltip)
 		{
 			return new GUIContent("", texture, tooltip);
-		}
-
-		private static string Wrap(string str, int maxLength)
-		{
-			string ret = "", line = "";
-			foreach (string word in str.Split(' '))
-			{
-				if ((line + word).Length > maxLength)
-				{
-					ret += line + "\n";
-					line = "";
-				}
-
-				line += word + ' ';
-			}
-
-			return ret + line;
 		}
 
 		#endregion

@@ -31,6 +31,24 @@ namespace Exodrifter.Yggdrasil
 			set { EditorPrefs.SetString("yggdrasil-email", value); }
 		}
 
+		/// <summary>
+		/// The path to the id_rsa file.
+		/// </summary>
+		public string idrsa
+		{
+			get { return EditorPrefs.GetString("yggdrasil-idrsa"); }
+			set { EditorPrefs.SetString("yggdrasil-idrsa", value); }
+		}
+
+		/// <summary>
+		/// The path to the id_rsa.pub file.
+		/// </summary>
+		public string idrsa_pub
+		{
+			get { return EditorPrefs.GetString("yggdrasil-idrsa_pub"); }
+			set { EditorPrefs.SetString("yggdrasil-idrsa_pub", value); }
+		}
+
 		public string GetPath()
 		{
 			if (string.IsNullOrEmpty(path))

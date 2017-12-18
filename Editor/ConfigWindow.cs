@@ -26,6 +26,20 @@ namespace Exodrifter.Yggdrasil
 
 			EditorGUILayout.Space();
 
+			// id_rsa path
+			EditorGUILayout.BeginHorizontal();
+			EditorGUILayout.PrefixLabel("id_rsa");
+			config.idrsa = EditorGUILayout.TextField(config.idrsa);
+			EditorGUILayout.EndHorizontal();
+
+			// id_rsa.pub path
+			EditorGUILayout.BeginHorizontal();
+			EditorGUILayout.PrefixLabel("id_rsa.pub");
+			config.idrsa_pub = EditorGUILayout.TextField(config.idrsa_pub);
+			EditorGUILayout.EndHorizontal();
+
+			EditorGUILayout.Space();
+
 			// Repository Path
 			EditorGUILayout.BeginHorizontal();
 			EditorGUILayout.PrefixLabel("Repository Path");
