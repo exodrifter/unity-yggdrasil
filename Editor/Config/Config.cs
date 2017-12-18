@@ -5,6 +5,9 @@ using UnityEngine;
 
 namespace Exodrifter.Yggdrasil
 {
+	/// <summary>
+	/// Stores Yggdrasil configuration values.
+	/// </summary>
 	[Serializable]
 	public class Config
 	{
@@ -143,9 +146,8 @@ namespace Exodrifter.Yggdrasil
 		/// </returns>
 		private static string GetConfigPath()
 		{
-			var p = System.IO.Path.Combine(
-				PathCache.DataPath, "../ProjectSettings/Yggdrasil.json");
-			return System.IO.Path.GetFullPath(p);
+			return System.IO.Path.GetFullPath(System.IO.Path.Combine(
+				PathCache.DataPath, "../ProjectSettings/Yggdrasil.json"));
 		}
 
 		#endregion
