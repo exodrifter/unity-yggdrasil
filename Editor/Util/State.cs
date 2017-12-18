@@ -33,10 +33,10 @@ namespace Exodrifter.Yggdrasil
 		/// </summary>
 		private static void UpdateCache_Internal()
 		{
-			var repoPath = ConfigWindow.Config.GetPath();
+			var config = Config.Load();
 			try
 			{
-				var repo = new Repository(repoPath);
+				var repo = new Repository(config.FullPath);
 				invalidRepository = false;
 
 				files = files ?? new List<StatusEntry>();

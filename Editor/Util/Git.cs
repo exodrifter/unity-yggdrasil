@@ -17,9 +17,11 @@ namespace Exodrifter.Yggdrasil
 		/// <returns>True if operation was successful.</returns>
 		public static bool AddAll()
 		{
+			var config = Config.Load();
+
 			try
 			{
-				using (var repo = new Repository(ConfigWindow.Config.path))
+				using (var repo = new Repository(config.FullPath))
 				{
 					foreach (var file in repo.RetrieveStatus())
 					{
@@ -41,9 +43,11 @@ namespace Exodrifter.Yggdrasil
 		/// <returns>True if operation was successful.</returns>
 		public static bool Add(List<string> files)
 		{
+			var config = Config.Load();
+
 			try
 			{
-				using (var repo = new Repository(ConfigWindow.Config.path))
+				using (var repo = new Repository(config.FullPath))
 				{
 					foreach (var file in files)
 					{
@@ -60,17 +64,47 @@ namespace Exodrifter.Yggdrasil
 		}
 
 		/// <summary>
+		/// git checkout -- file
+		/// </summary>
+		/// <param name="path">
+		/// The path of the file to discard the changes of.
+		/// </param>
+		/// <returns>True if the operation was successful.</returns>
+		public static bool Checkout(string path)
+		{
+			var config = Config.Load();
+
+			try
+			{
+				using (var repo = new Repository(config.FullPath))
+				{
+					var opts = new CheckoutOptions();
+					opts.CheckoutModifiers = CheckoutModifiers.Force;
+					repo.CheckoutPaths("HEAD", new string[] { path }, opts);
+				}
+			}
+			catch (RepositoryNotFoundException)
+			{
+				return false;
+			}
+
+			return true;
+		}
+
+		/// <summary>
 		/// git commit -m message
 		/// </summary>
 		/// <returns>True if operation was successful.</returns>
 		public static bool Commit(string summary, string message)
 		{
+			var config = Config.Load();
+
 			try
 			{
-				using (var repo = new Repository(ConfigWindow.Config.path))
+				using (var repo = new Repository(config.FullPath))
 				{
-					var name = ConfigWindow.Config.name;
-					var email = ConfigWindow.Config.email;
+					var name = config.Name;
+					var email = config.Email;
 					var timestamp = DateTime.Now;
 					var author = new Signature(name, email, timestamp);
 					var str = MakeMessage(summary, message);
@@ -91,9 +125,11 @@ namespace Exodrifter.Yggdrasil
 		/// <returns>True if operation was successful.</returns>
 		public static bool Push()
 		{
+			var config = Config.Load();
+
 			try
 			{
-				using (var repo = new Repository(ConfigWindow.Config.path))
+				using (var repo = new Repository(config.FullPath))
 				{
 					var branch = repo.Branches.Where(b => b.IsCurrentRepositoryHead).First();
 					var opts = new PushOptions();
@@ -113,12 +149,14 @@ namespace Exodrifter.Yggdrasil
 
 		private static Credentials MyCredentialsProvider(string url, string usernameFromUrl, SupportedCredentialTypes types)
 		{
+			var config = Config.Load();
+
 			return new SshUserKeyCredentials()
 			{
 				Username = usernameFromUrl,
 				Passphrase = string.Empty,
-				PublicKey = ConfigWindow.Config.idrsa_pub,
-				PrivateKey = ConfigWindow.Config.idrsa,
+				PublicKey = config.IdRsaPub,
+				PrivateKey = config.IdRsa,
 			};
 		}
 

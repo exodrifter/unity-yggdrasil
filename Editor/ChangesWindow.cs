@@ -26,6 +26,8 @@ namespace Exodrifter.Yggdrasil
 
 		void OnGUI()
 		{
+			var config = Config.Load();
+
 			// Start scroll view
 			scrollPos = EditorGUILayout.BeginScrollView(scrollPos);
 
@@ -42,8 +44,8 @@ namespace Exodrifter.Yggdrasil
 				}
 			}
 			// Check if user info is set
-			else if (string.IsNullOrEmpty(ConfigWindow.Config.name)
-				|| string.IsNullOrEmpty(ConfigWindow.Config.email))
+			else if (string.IsNullOrEmpty(config.Name)
+				|| string.IsNullOrEmpty(config.Email))
 			{
 				EditorGUILayout.HelpBox(
 					"Please set your name and email!",
@@ -209,31 +211,24 @@ namespace Exodrifter.Yggdrasil
 			}
 		}
 
+		#region Git
+
 		/// <summary>
 		/// Emulates the `git checkout -- file` command.
 		/// </summary>
 		/// <param name="path">The path with the changes to discard.</param>
 		private void CheckoutFile(string path)
 		{
-			try
-			{
-				using (var repo = new Repository(ConfigWindow.Config.path))
-				{
-					var opts = new CheckoutOptions();
-					opts.CheckoutModifiers = CheckoutModifiers.Force;
-					repo.CheckoutPaths("HEAD", new string[] { path }, opts);
-				}
-			}
-			finally
-			{
-				GUI.FocusControl(null);
-				if (toggled.Dictionary.ContainsKey(path))
-				{
-					toggled.Dictionary.Remove(path);
-				}
+			Git.Checkout(path);
 
-				State.UpdateCache();
+			// Reset UI
+			GUI.FocusControl(null);
+			if (toggled.Dictionary.ContainsKey(path))
+			{
+				toggled.Dictionary.Remove(path);
 			}
+
+			State.UpdateCache();
 		}
 
 		/// <summary>
@@ -271,6 +266,8 @@ namespace Exodrifter.Yggdrasil
 
 			State.UpdateCache();
 		}
+
+		#endregion
 
 		#region Static
 
