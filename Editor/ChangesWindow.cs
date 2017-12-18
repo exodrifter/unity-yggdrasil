@@ -1,6 +1,6 @@
 ﻿using LibGit2Sharp;
-using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -135,7 +135,8 @@ namespace Exodrifter.Yggdrasil
 					State.UpdateCache();
 				}
 			}
-			else {
+			else
+			{
 				EditorGUILayout.HelpBox(
 					"Up to date with server.",
 					MessageType.Info);
@@ -164,7 +165,21 @@ namespace Exodrifter.Yggdrasil
 			GUI.skin.label.fontStyle = oldFontStyle;
 			EditorGUILayout.EndHorizontal();
 
-			toggled = new ToggledDictionary();
+			// Remove toggle entries for files that are no longer changed
+			var toRemove = new List<string>();
+			toggled = toggled ?? new ToggledDictionary();
+			foreach (var file in toggled.Dictionary.Keys)
+			{
+				if (!State.Files.Select(x => x.FilePath).Contains(file))
+				{
+					toRemove.Add(file);
+				}
+			}
+			foreach (var file in toRemove)
+			{
+				toggled.Dictionary.Remove(file);
+			}
+
 			foreach (var file in State.Files)
 			{
 				EditorGUILayout.BeginHorizontal();
