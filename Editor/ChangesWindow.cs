@@ -122,6 +122,10 @@ namespace Exodrifter.Yggdrasil
 				GUILayout.MinWidth(size), GUILayout.MinHeight(size),
 				GUILayout.MaxWidth(size), GUILayout.MaxHeight(size)
 			};
+			var button = new GUILayoutOption[] {
+				GUILayout.MinWidth(size * 2 - 4), GUILayout.MinHeight(size - 2),
+				GUILayout.MaxWidth(size * 2 - 4), GUILayout.MaxHeight(size - 2)
+			};
 
 			EditorGUILayout.BeginHorizontal();
 			all = EditorGUILayout.Toggle(all, square);
@@ -158,7 +162,7 @@ namespace Exodrifter.Yggdrasil
 				{
 					case FileStatus.DeletedFromIndex:
 					case FileStatus.DeletedFromWorkdir:
-						GUILayout.Label(ImageCache.Deleted, square);
+						GUILayout.Label(Content(ImageCache.Deleted, "This file has been deleted."), square);
 						break;
 
 					case FileStatus.ModifiedInIndex:
@@ -167,12 +171,12 @@ namespace Exodrifter.Yggdrasil
 					case FileStatus.RenamedInWorkdir:
 					case FileStatus.TypeChangeInIndex:
 					case FileStatus.TypeChangeInWorkdir:
-						GUILayout.Label(ImageCache.Modified, square);
+						GUILayout.Label(Content(ImageCache.Modified, "This file has been modified."), square);
 						break;
 
 					case FileStatus.NewInIndex:
 					case FileStatus.NewInWorkdir:
-						GUILayout.Label(ImageCache.Added, square);
+						GUILayout.Label(Content(ImageCache.Added, "This file has been added."), square);
 						break;
 
 					case FileStatus.Ignored:
@@ -182,6 +186,17 @@ namespace Exodrifter.Yggdrasil
 
 				// Draw file label
 				EditorGUILayout.LabelField(file.FilePath);
+
+				EditorGUILayout.Space();
+
+				if (GUILayout.Button(Content(ImageCache.X, "Discard Changes"), button))
+				{
+					var msg = "Are you sure you want to discard the changes to " + file.FilePath + "?";
+					if (EditorUtility.DisplayDialog("Discard Changes?", msg, "Yes", "No"))
+					{
+						CheckoutFile(file.FilePath);
+					}
+				}
 				GUI.enabled = true;
 
 				EditorGUILayout.EndHorizontal();
@@ -193,6 +208,36 @@ namespace Exodrifter.Yggdrasil
 			}
 		}
 
+		/// <summary>
+		/// Emulates the `git checkout -- file` command.
+		/// </summary>
+		/// <param name="path">The path with the changes to discard.</param>
+		private void CheckoutFile(string path)
+		{
+			try
+			{
+				using (var repo = new Repository(ConfigWindow.Config.path))
+				{
+					var opts = new CheckoutOptions();
+					opts.CheckoutModifiers = CheckoutModifiers.Force;
+					repo.CheckoutPaths("HEAD", new string[] { path }, opts);
+				}
+			}
+			finally
+			{
+				GUI.FocusControl(null);
+				if (toggled.Dictionary.ContainsKey(path))
+				{
+					toggled.Dictionary.Remove(path);
+				}
+
+				State.UpdateCache();
+			}
+		}
+
+		/// <summary>
+		/// Emulates the `git add .`, `git commit`, and `git push` commands.
+		/// </summary>
 		private void CommitAndPushToggled()
 		{
 			try
@@ -255,6 +300,16 @@ namespace Exodrifter.Yggdrasil
 				if (value) return true;
 			}
 			return false;
+		}
+
+		private static GUIContent Content(string tooltip)
+		{
+			return new GUIContent("", null, tooltip);
+		}
+
+		private static GUIContent Content(Texture texture, string tooltip)
+		{
+			return new GUIContent("", texture, tooltip);
 		}
 
 		private static string Wrap(string str, int maxLength)

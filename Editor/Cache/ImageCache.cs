@@ -82,6 +82,25 @@ namespace Exodrifter.Yggdrasil
 			+ "pt09FN6bMHOyrS7QZb04ha/WLjRM9wv64kAqOvy9LF16vzLvFI3eoiEBW6UFToVD"
 			+ "jxNL5A0sSzj7Dn2GMFIVxNcnyHq1FO5V/y2hNpA5KxqC4yhwAAAABJRU5ErkJggg"
 			+ "==";
+		
+		/// <summary>
+		/// The X icon (used for the discarding changes button).
+		/// </summary>
+		public static Texture2D X
+		{
+			get
+			{
+				LoadTexture(xStr, ref xTex);
+				return xTex;
+			}
+		}
+		private static Texture2D xTex;
+		private const string xStr =
+			"iVBORw0KGgoAAAANSUhEUgAAABkAAAAZBAMAAAA2x5hQAAAAJFBMVEUAAAAAAAAAAA"
+			+ "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACmWAJHAAAAC3RSTlMABKuPPPOfh9"
+			+ "rjziKV6G4AAABqSURBVBjTY2ApYIACxhQGBtfNMJ7QVgeG7N0GUCnt3QUMQrshki"
+			+ "AGSAgkCaGhYhAKJggloaJQAiYJkYJJgqXgkt0gKbgkSAouOXv3AgZ0OUx9CDMx7U"
+			+ "O4Bc2dqH5A8x+q31HDBTXMUMMTAIoSO0YU9rTJAAAAAElFTkSuQmCC";
 
 		/// <summary>
 		/// Utility method to load a texture.
