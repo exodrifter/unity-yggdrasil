@@ -47,8 +47,8 @@ namespace Exodrifter.Yggdrasil
 		/// </summary>
 		public string Name
 		{
-			get { return EditorPrefs.GetString("yggdrasil-user"); }
-			set { EditorPrefs.SetString("yggdrasil-user", value); }
+			get { return EditorPrefs.GetString(GetKey("user")); }
+			set { EditorPrefs.SetString(GetKey("user"), value); }
 		}
 
 		/// <summary>
@@ -56,8 +56,8 @@ namespace Exodrifter.Yggdrasil
 		/// </summary>
 		public string Email
 		{
-			get { return EditorPrefs.GetString("yggdrasil-email"); }
-			set { EditorPrefs.SetString("yggdrasil-email", value); }
+			get { return EditorPrefs.GetString(GetKey("email")); }
+			set { EditorPrefs.SetString(GetKey("email"), value); }
 		}
 
 		/// <summary>
@@ -65,8 +65,8 @@ namespace Exodrifter.Yggdrasil
 		/// </summary>
 		public string IdRsa
 		{
-			get { return EditorPrefs.GetString("yggdrasil-idrsa"); }
-			set { EditorPrefs.SetString("yggdrasil-idrsa", value); }
+			get { return EditorPrefs.GetString(GetKey("idrsa")); }
+			set { EditorPrefs.SetString(GetKey("idrsa"), value); }
 		}
 
 		/// <summary>
@@ -74,8 +74,18 @@ namespace Exodrifter.Yggdrasil
 		/// </summary>
 		public string IdRsaPub
 		{
-			get { return EditorPrefs.GetString("yggdrasil-idrsa_pub"); }
-			set { EditorPrefs.SetString("yggdrasil-idrsa_pub", value); }
+			get { return EditorPrefs.GetString(GetKey("idrsapub")); }
+			set { EditorPrefs.SetString(GetKey("idrsapub"), value); }
+		}
+
+		/// <summary>
+		/// Returns a project-specific EditorPref key.
+		/// </summary>
+		/// <returns>A project-specific EditorPref key.</returns>
+		private static string GetKey(string suffix)
+		{
+			return string.Format("yggdrasil-{0}.{1}-{2}",
+				PlayerSettings.companyName, PlayerSettings.productName, suffix);
 		}
 
 		#endregion
