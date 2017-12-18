@@ -120,6 +120,68 @@ namespace Exodrifter.Yggdrasil
 		}
 
 		/// <summary>
+		/// git fetch --all
+		/// </summary>
+		/// <returns>True if operation was successful.</returns>
+		public static bool Fetch()
+		{
+			var config = Config.Load();
+
+			try
+			{
+				using (var repo = new Repository(config.FullPath))
+				{
+					FetchOptions options = new FetchOptions();
+					options.CredentialsProvider = MyCredentialsProvider;
+
+					foreach (Remote remote in repo.Network.Remotes)
+					{
+						IEnumerable<string> refSpecs = remote.FetchRefSpecs.Select(x => x.Specification);
+						Commands.Fetch(repo, remote.Name, refSpecs, options, "");
+					}
+				}
+			}
+			catch (RepositoryNotFoundException)
+			{
+				return false;
+			}
+
+			return true;
+		}
+
+		/// <summary>
+		/// git pull
+		/// </summary>
+		/// <returns>True if operation was successful.</returns>
+		public static bool Pull()
+		{
+			var config = Config.Load();
+
+			try
+			{
+				using (var repo = new Repository(config.FullPath))
+				{
+					PullOptions options = new PullOptions();
+					options.FetchOptions = new FetchOptions();
+					options.FetchOptions.CredentialsProvider = MyCredentialsProvider;
+					options.MergeOptions = new MergeOptions();
+					options.MergeOptions.FastForwardStrategy = FastForwardStrategy.FastForwardOnly;
+
+					foreach (Remote remote in repo.Network.Remotes)
+					{
+						Commands.Pull(repo, GetSignature(config), options);
+					}
+				}
+			}
+			catch (RepositoryNotFoundException)
+			{
+				return false;
+			}
+
+			return true;
+		}
+
+		/// <summary>
 		/// git push origin
 		/// </summary>
 		/// <returns>True if operation was successful.</returns>
@@ -158,6 +220,16 @@ namespace Exodrifter.Yggdrasil
 				PublicKey = config.IdRsaPub,
 				PrivateKey = config.IdRsa,
 			};
+		}
+
+		private static Signature GetSignature(Config config = null)
+		{
+			config = config ?? Config.Load();
+
+			var name = config.Name;
+			var email = config.Email;
+			var timestamp = DateTime.Now;
+			return new Signature(name, email, timestamp);
 		}
 
 		private static string MakeMessage(string summary, string message)

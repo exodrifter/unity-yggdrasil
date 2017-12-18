@@ -59,6 +59,8 @@ namespace Exodrifter.Yggdrasil
 			// No changes info message
 			else if (State.Files.Count == 0)
 			{
+				DrawServerChanges();
+
 				EditorGUILayout.HelpBox(
 					"No changes detected.",
 					MessageType.Info);
@@ -66,7 +68,8 @@ namespace Exodrifter.Yggdrasil
 			// Show changes
 			else
 			{
-				DrawChanges();
+				DrawServerChanges();
+				DrawFileChanges();
 
 				EditorGUILayout.Space();
 
@@ -118,7 +121,28 @@ namespace Exodrifter.Yggdrasil
 			EditorGUILayout.EndScrollView();
 		}
 
-		private void DrawChanges()
+		private void DrawServerChanges()
+		{
+			if (State.BehindBy > 0)
+			{
+				EditorGUILayout.HelpBox(
+					State.BehindBy + " new commits on server. Please pull.",
+					MessageType.Warning);
+
+				if (GUILayout.Button("Pull"))
+				{
+					Git.Pull();
+					State.UpdateCache();
+				}
+			}
+			else {
+				EditorGUILayout.HelpBox(
+					"Up to date with server.",
+					MessageType.Info);
+			}
+		}
+
+		private void DrawFileChanges()
 		{
 			var size = EditorGUIUtility.singleLineHeight;
 			var square = new GUILayoutOption[] {
