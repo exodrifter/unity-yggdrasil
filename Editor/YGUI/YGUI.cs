@@ -30,6 +30,11 @@ namespace Exodrifter.Yggdrasil
 			EditorGUILayout.HelpBox(message, MessageType.Warning);
 		}
 
+		public static bool Button(string label)
+		{
+			return GUILayout.Button(label);
+		}
+
 		public static void Label(string label, FontStyle? style = null)
 		{
 			var oldStyle = GUI.skin.label.fontStyle;
